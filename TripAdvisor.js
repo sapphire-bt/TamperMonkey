@@ -9,13 +9,16 @@
 
 	// Add mutation observer to main results wrapper.
 	var linkWrapper = document.getElementById("MAIN_PAGE_FRAGMENT");
-	var observer    = new MutationObserver(removeTrash);
 
-	observer.observe(linkWrapper, {
-		attributes : true,
-		childList  : true,
-		subtree    : true
-	})
+	if (linkWrapper) {
+		var observer = new MutationObserver(removeTrash);
+
+		observer.observe(linkWrapper, {
+			attributes : true,
+			childList  : true,
+			subtree    : true
+		})
+	}
 
 	// Run function.
 	removeTrash();
