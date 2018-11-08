@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TripAdvisor TRASH
 // @version      2018-11-08
-// @description  Remove onclick/tracking elements from "things to do" page.
+// @description  Removes onclick/tracking elements from "things to do" page and turns them into *actual* clickable links.
 // @match        https://www.tripadvisor.co.uk/*
 // ==/UserScript==
 
