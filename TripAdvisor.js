@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         TripAdvisor TRASH
-// @version      2018-11-08
+// @version      2019-04-06
 // @description  Removes onclick/tracking elements from "things to do" page and turns them into *actual* clickable links.
 // @match        https://www.tripadvisor.co.uk/*
 // ==/UserScript==
 
 (function() {
-
 	// Add mutation observer to main results wrapper.
 	var linkWrapper = document.getElementById("MAIN_PAGE_FRAGMENT");
 
@@ -25,6 +24,10 @@
 
 	// Main function.
 	function removeTrash(mutationsList, observer) {
+
+		// Handle any "data-encoded-url" elements as well.
+		decodeTrashLinks();
+
 		// Get all attraction links with onclick attributes.
 		var trashLinks = document.querySelectorAll(".attraction_list [onclick]");
 
@@ -42,7 +45,7 @@
 					var param = clickData[x].trim();
 
 					// Check if it's a URL.
-					if (/^\/.*?\.html$/.test(param)) {
+					if (param.endsWith(".html")) {
 
 						// Element is an anchor, so just add a href.
 						if (el.tagName === "A") {
@@ -73,4 +76,47 @@
 		}
 	}
 
+	/**
+	 * Wrap data-encoded-url elements inside an <a> and convert attribute to href.
+	 */
+	function decodeTrashLinks() {
+		const encodedUrls = document.querySelectorAll("[data-encoded-url]");
+
+		if (encodedUrls.length > 0) {
+			for (let i = 0; i < encodedUrls.length; i++) {
+				// Current data-encoded-url element.
+				let el = encodedUrls[i];
+
+				// Decoded URL - still contains tracking prefix/suffix.
+				let attr = atob(el.getAttribute("data-encoded-url"));
+
+				// Remove extra crap.
+				let url = attr.slice(attr.indexOf("/") + "/".length, attr.indexOf(".html") + ".html".length);
+
+				// The parent <div> which has click event listeners.
+				let parent = el.parentNode;
+
+				// New <a> element to wrap contents in the encoded URL.
+				let a = document.createElement("a");
+
+				// Remove trash attribute just in case.
+				el.removeAttribute("data-encoded-url");
+
+				// Set the new href and append a cloned version of the contents.
+				a.href = url;
+				a.append(el.cloneNode(true));
+
+				// Wrap everything in the new <a> element.
+				parent.replaceChild(a, el);
+
+				// Clone the parent <div> to remove the click event listeners.
+				cloneElement(parent);
+			}
+		}
+	}
+
+	// A simple function which clones and replaces a given element to remove event listeners.
+	function cloneElement(el) {
+		el.parentNode.replaceChild(el.cloneNode(true), el);
+	}
 })();
