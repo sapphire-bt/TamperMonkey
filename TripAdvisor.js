@@ -19,8 +19,31 @@
 		})
 	}
 
+	// Bind arrow keys to photo carousel.
+	bindArrowKeys();
+
 	// Run function.
 	removeTrash();
+
+	function bindArrowKeys() {
+		document.addEventListener("keydown", function(e) {
+			let carouselLeft  = document.querySelectorAll(".heroNav.left")[0];
+			let carouselRight = document.querySelectorAll(".heroNav.right")[0];
+
+			switch (e.code) {
+				case "ArrowLeft":
+					if (carouselLeft !== undefined) carouselLeft.click();
+				break;
+
+				case "ArrowRight":
+					if (carouselRight !== undefined) carouselRight.click();
+				break;
+
+				default:
+				break;
+			}
+		})
+	}
 
 	// Main function.
 	function removeTrash(mutationsList, observer) {
